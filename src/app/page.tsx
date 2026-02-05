@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlaidLink } from "@/components/dashboard/plaid-link";
+import { TransactionList } from "@/components/dashboard/transaction-list"; // <--- Imported here
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/db";
 import { plaidItems } from "@/db/schema";
@@ -17,11 +18,10 @@ export default async function Home() {
     .from(plaidItems)
     .where(eq(plaidItems.userId, user?.id!));
 
-  // 3. FETCH REAL BALANCES (The New Magic)
+  // 3. FETCH REAL BALANCES
   let totalNetWorth = 0;
   let accountCount = 0;
 
-  // We use Promise.all to fetch all banks at the same time (faster)
   await Promise.all(
     banks.map(async (bank) => {
       try {
@@ -29,7 +29,6 @@ export default async function Home() {
           access_token: bank.accessToken,
         });
         
-        // Add up the balances of all accounts in this bank
         const bankTotal = response.data.accounts.reduce((acc, account) => {
           return acc + (account.balances.current || 0);
         }, 0);
@@ -42,7 +41,6 @@ export default async function Home() {
     })
   );
 
-  // Format currency (e.g. 15000 -> "$15,000.00")
   const formattedNetWorth = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -66,9 +64,10 @@ export default async function Home() {
         <PlaidLink />
       </div>
 
-      {/* Net Worth Card */}
+      {/* TOP ROW: Net Worth + Recent Transactions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-black text-white border-zinc-800">
+        {/* Net Worth Card */}
+        <Card className="bg-black text-white border-zinc-800 col-span-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-zinc-400">Total Net Worth</CardTitle>
           </CardHeader>
@@ -79,9 +78,12 @@ export default async function Home() {
             </p>
           </CardContent>
         </Card>
+
+        {/* RECENT ACTIVITY LIST (Takes up 2 columns) */}
+        <TransactionList />
       </div>
 
-      {/* Connected Accounts List */}
+      {/* BOTTOM ROW: Connected Accounts */}
       <div>
         <h2 className="text-lg font-semibold mb-4 text-zinc-900">Connected Institutions</h2>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
