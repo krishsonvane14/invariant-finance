@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Invariant Finance
 
-## Getting Started
+**A robust, secure personal finance dashboard built with Next.js, Supabase, and Plaid.**
 
-First, run the development server:
+[![Deploy with Vercel](https://vercel.com/button)](https://invariant-finance.vercel.app/)
+<br />
+**[View Live Demo](https://invariant-finance.vercel.app/)**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+<!-- ## Demo Video
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Check out the full walkthrough of Invariant, featuring real-time bank connection and budget tracking:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+[![Watch the Demo](https://img.youtube.com/vi/YOUR_VIDEO_ID_HERE/maxresdefault.jpg)](https://youtu.be/YOUR_VIDEO_LINK_HERE)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+*(Click the image above to watch the video)*
 
-## Learn More
+--- -->
 
-To learn more about Next.js, take a look at the following resources:
+##  Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+-   **Real-Time Banking Connections**: Securely link bank accounts (Chase, Wells Fargo, etc.) using **Plaid API**.
+-   **Smart Budgeting**: Create custom monthly budgets (e.g., Food, Travel) and track progress with dynamic progress bars.
+-   **Live Net Worth Tracking**: Automatically calculates total assets across all connected checking, savings, and credit accounts.
+-   **Interactive Analytics**:
+    -   **Spending Breakdown**: Donut charts showing where money goes by category.
+    -   **Income Analysis**: Dedicated view for tracking inflows and paychecks.
+    -   **Market Terminal**: A simulated stock market analysis tool to track major indices and tech stocks.
+-   **Bank-Grade Security**: Full implementation of Row Level Security (RLS) via Supabase to ensure data isolation.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+##  Tech Stack
 
-## Deploy on Vercel
+-   **Framework**: [Next.js 14](https://nextjs.org/) (App Router, Server Actions)
+-   **Database**: [Supabase](https://supabase.com/) (PostgreSQL)
+-   **Authentication**: Supabase Auth
+-   **ORM**: [Drizzle ORM](https://orm.drizzle.team/)
+-   **Banking API**: [Plaid](https://plaid.com/)
+-   **Styling**: [Tailwind CSS](https://tailwindcss.com/) & [Shadcn/UI](https://ui.shadcn.com/)
+-   **Charts**: [Recharts](https://recharts.org/)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+##  Getting Started
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Prerequisites
+
+1.  **Node.js** (v18 or higher)
+2.  **Supabase Account** (for database & auth)
+3.  **Plaid Dashboard Account** (for banking API keys)
+
+### Installation
+
+1.  **Clone the repository**
+    ```bash
+    git clone [https://github.com/yourusername/invariant.git](https://github.com/yourusername/invariant.git)
+    cd invariant
+    ```
+
+2.  **Install dependencies**
+    ```bash
+    npm install
+    ```
+
+3.  **Set up Environment Variables**
+    Create a `.env` file in the root directory and add your keys:
+
+    ```env
+    # Supabase (Database & Auth)
+    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+    DATABASE_URL=your_postgres_connection_string
+
+    # Plaid (Banking API)
+    PLAID_CLIENT_ID=your_plaid_client_id
+    PLAID_SECRET=your_plaid_secret_key
+    PLAID_ENV=sandbox  # Use 'development' for real data
+    ```
+
+4.  **Push Database Schema**
+    Sync your local schema with Supabase:
+    ```bash
+    npx drizzle-kit push
+    ```
+
+5.  **Run the App**
+    ```bash
+    npm run dev
+    ```
+    Open [http://localhost:3000](http://localhost:3000) to see the app.
+
+## Security
+
+This project uses **Row Level Security (RLS)** in PostgreSQL. This means:
+-   Users can only read/write their own data.
+-   Even if the API is accessed directly, a user cannot view another user's budgets or transactions.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
