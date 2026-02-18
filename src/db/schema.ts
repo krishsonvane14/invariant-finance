@@ -1,8 +1,8 @@
-import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { integer, pgTable, serial, text, timestamp, numeric, uuid} from "drizzle-orm/pg-core";
 
-// This matches Supabase's internal Auth table structure
+
 export const users = pgTable("users", {
-  id: uuid("id").primaryKey(), // This will link to Supabase Auth
+  id: uuid("id").primaryKey(), 
   email: text("email").notNull(),
   name: text("name"),
   imageUrl: text("image_url"),
@@ -20,4 +20,12 @@ export const plaidItems = pgTable("plaid_items", {
   itemId: text("item_id").notNull(),
   institutionName: text("institution_name"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const budgets = pgTable("budgets", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  category: text("category").notNull(),
+  amount: numeric("amount").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
 });

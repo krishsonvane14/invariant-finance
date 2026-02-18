@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { plaidClient } from "@/lib/plaid";
 import { createClient } from "@/lib/supabase/server";
-import { CountryCode, Products } from "plaid"; // <--- Import these!
+import { CountryCode, Products } from "plaid"; 
 
 export async function POST() {
   const supabase = await createClient();
@@ -17,9 +17,9 @@ export async function POST() {
     const tokenResponse = await plaidClient.linkTokenCreate({
       user: { client_user_id: user.id },
       client_name: "Invariant",
-      products: [Products.Transactions], // <--- Use Enum
+      products: [Products.Transactions], 
       language: "en",
-      country_codes: [CountryCode.Us, CountryCode.Ca], // <--- Use Enum
+      country_codes: [CountryCode.Us, CountryCode.Ca], 
     });
 
     return NextResponse.json(tokenResponse.data);

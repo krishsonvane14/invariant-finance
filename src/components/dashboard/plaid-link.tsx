@@ -22,7 +22,7 @@ export function PlaidLink() {
 
   const onSuccess = useCallback<PlaidLinkOnSuccess>(
     async (public_token, metadata) => {
-      // Send the token to our new API route
+      
       await fetch("/api/plaid/exchange-public-token", {
         method: "POST",
         headers: {
@@ -35,7 +35,7 @@ export function PlaidLink() {
       });
 
       alert("Bank Connected & Saved!");
-      router.refresh(); // Refresh to show new data (we will add this next)
+      router.refresh(); 
     },
     [router]
   );
