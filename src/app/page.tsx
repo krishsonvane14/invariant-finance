@@ -8,9 +8,8 @@ import { BankCard } from "@/components/dashboard/bank-card";
 import { AddBudgetDialog } from "@/components/dashboard/add-budget-dialog";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/db";
-import { plaidItems, budgets } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import { plaidClient } from "@/lib/plaid";
+import { plaidItems, budgets, accounts, transactions } from "@/db/schema";
+import { and, desc, eq, gte, sum } from "drizzle-orm";
 import { DeleteBudgetButton } from "@/components/dashboard/delete-budget-button";
 import { redirect } from "next/navigation";
 
@@ -20,40 +19,40 @@ export default async function Home() {
 
   if (!user) redirect("/login");
 
-  const banks = await db.select().from(plaidItems).where(eq(plaidItems.userId, user.id));
-  const userBudgets = await db.select().from(budgets).where(eq(budgets.userId, user.id));
-
-  let totalNetWorth = 0;
-  let allTransactions: any[] = [];
-  
-
-  const now = new Date();
   const past30Days = new Date();
-  past30Days.setDate(now.getDate() - 30); 
+  past30Days.setDate(past30Days.getDate() - 30);
+  const startDate = past30Days.toISOString().split("T")[0];
 
-  const startDate = past30Days.toISOString().split('T')[0]; 
-  const endDate = now.toISOString().split('T')[0];
+  // Four independent DB queries run in parallel — replaces N+1 live Plaid API calls
+  const [banks, userBudgets, netWorthResult, dbTransactions] = await Promise.all([
+    db.select().from(plaidItems).where(eq(plaidItems.userId, user.id)),
+    db.select().from(budgets).where(eq(budgets.userId, user.id)),
+    db
+      .select({ total: sum(accounts.currentBalance) })
+      .from(accounts)
+      .where(eq(accounts.userId, user.id)),
+    db
+      .select()
+      .from(transactions)
+      .where(and(eq(transactions.userId, user.id), gte(transactions.date, startDate)))
+      .orderBy(desc(transactions.date))
+      .limit(500),
+  ]);
 
-  await Promise.all(
-    banks.map(async (bank) => {
-      try {
-        const balanceRes = await plaidClient.accountsBalanceGet({ access_token: bank.accessToken });
-        const bankTotal = balanceRes.data.accounts.reduce((acc, a) => acc + (a.balances.current || 0), 0);
-        totalNetWorth += bankTotal;
-
-        const txnRes = await plaidClient.transactionsGet({ 
-            access_token: bank.accessToken,
-            start_date: startDate,
-            end_date: endDate,
-            options: { count: 500 }
-        });
-        
-        allTransactions.push(...txnRes.data.transactions);
-      } catch (err) { console.error("Plaid Error:", err); }
-    })
-  );
-
+  // sum() returns null when accounts table is empty — $0 is the correct empty state
+  const totalNetWorth = parseFloat(netWorthResult[0]?.total ?? "0");
   const formattedNetWorth = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(totalNetWorth);
+
+  // Map DB rows to the shape the existing JSX already expects — no JSX changes needed.
+  // amount: numeric string → number; transaction_id: renamed from plaidTransactionId;
+  // personal_finance_category: reconstructed from categoryPrimary.
+  const allTransactions: any[] = dbTransactions.map((t) => ({
+    transaction_id: t.plaidTransactionId,
+    name: t.name,
+    date: t.date,
+    amount: parseFloat(t.amount),
+    personal_finance_category: t.categoryPrimary ? { primary: t.categoryPrimary } : null,
+  }));
 
   return (
     <DashboardLayout user={user} banks={banks}>
