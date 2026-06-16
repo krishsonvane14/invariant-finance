@@ -20,41 +20,41 @@ export function BankCard({ bank }: BankCardProps) {
 
   const handleDelete = async () => {
     if (!confirm("Are you sure you want to disconnect this bank?")) return;
-    
+
     setLoading(true);
     await fetch("/api/plaid/delete", {
       method: "POST",
       body: JSON.stringify({ id: bank.id }),
     });
-    
-    router.refresh(); 
+
+    router.refresh();
     setLoading(false);
   };
 
   return (
-    <Card className="hover:shadow-md transition-shadow bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 relative group">
+    <Card className="bg-surface border-border relative group">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-base font-semibold text-zinc-900 dark:text-zinc-50">
+        <CardTitle className="text-sm font-medium text-foreground">
           {bank.institutionName}
         </CardTitle>
-        
-        {/* Status Dot */}
+
+        {/* Active pulse dot */}
         <span className="flex h-2 w-2 relative">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+          <span className="animate-ping absolute inline-flex h-full w-full bg-[#6b8f71] opacity-75"></span>
+          <span className="relative inline-flex h-2 w-2 bg-[#6b8f71]"></span>
         </span>
       </CardHeader>
-      
+
       <CardContent>
-        <div className="mt-4 flex justify-between items-center">
-          <div className="text-xs text-green-600 bg-green-50 dark:bg-green-900/30 w-fit px-2 py-1 rounded-full font-medium">
-             Active
+        <div className="mt-2 flex justify-between items-center">
+          <div className="text-xs text-[#6b8f71] bg-[#6b8f71]/10 w-fit px-2 py-1 font-medium tracking-widest uppercase">
+            active
           </div>
 
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-8 w-8 text-zinc-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 opacity-0 group-hover:opacity-100 transition-opacity"
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-muted-foreground hover:text-brand hover:bg-brand/10 opacity-0 group-hover:opacity-100 transition-opacity"
             onClick={handleDelete}
             disabled={loading}
           >

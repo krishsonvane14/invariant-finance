@@ -21,28 +21,34 @@ export function AddBudgetDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
-          <Plus className="h-4 w-4" /> Add Budget
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-2 border-border text-muted-foreground hover:text-brand hover:border-brand text-xs tracking-widest uppercase"
+        >
+          <Plus className="h-3 w-3" /> Add Budget
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-surface border-border">
         <DialogHeader>
-          <DialogTitle>Create Monthly Budget</DialogTitle>
+          <DialogTitle className="text-sm tracking-widest uppercase text-foreground">
+            Create Monthly Budget
+          </DialogTitle>
         </DialogHeader>
-        <form 
+        <form
           action={async (formData) => {
             await createBudget(formData);
             setOpen(false);
-          }} 
+          }}
           className="grid gap-4 py-4"
         >
           <div className="grid gap-2">
-            <Label>Category</Label>
+            <Label className="text-xs tracking-widest uppercase text-muted-foreground">Category</Label>
             <Select name="category" required>
-              <SelectTrigger>
-                <SelectValue placeholder="Select category" />
+              <SelectTrigger className="bg-muted border-border text-foreground">
+                <SelectValue placeholder="> select category" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-surface border-border">
                 <SelectItem value="Food and Drink">Food and Drink</SelectItem>
                 <SelectItem value="General Merchandise">General Merchandise</SelectItem>
                 <SelectItem value="Transportation">Transportation</SelectItem>
@@ -55,10 +61,27 @@ export function AddBudgetDialog() {
             </Select>
           </div>
           <div className="grid gap-2">
-            <Label>Monthly Limit ($)</Label>
-            <Input name="amount" type="number" placeholder="500" required />
+            <Label className="text-xs tracking-widest uppercase text-muted-foreground">Monthly Limit ($)</Label>
+            {/* Terminal-style > prompt prefix */}
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-brand text-sm select-none pointer-events-none">
+                &gt;
+              </span>
+              <Input
+                name="amount"
+                type="number"
+                placeholder="500"
+                required
+                className="bg-muted border-border text-foreground pl-7 tabular-nums"
+              />
+            </div>
           </div>
-          <Button type="submit">Save Budget</Button>
+          <Button
+            type="submit"
+            className="bg-brand hover:bg-brand/90 text-[#f0ece8] text-xs tracking-widest uppercase"
+          >
+            Save Budget
+          </Button>
         </form>
       </DialogContent>
     </Dialog>

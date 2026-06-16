@@ -8,7 +8,7 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ user, banks, children }: DashboardLayoutProps) {
   return (
-    <div className="flex min-h-screen bg-zinc-50 dark:bg-zinc-950 transition-colors duration-300">
+    <div className="flex min-h-screen bg-background">
       <Sidebar user={user} banks={banks} />
       <div className="flex-1 min-w-0 flex flex-col">
         {children}

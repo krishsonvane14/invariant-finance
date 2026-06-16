@@ -19,7 +19,8 @@ interface CategoryData {
   color: string;
 }
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8", "#82ca9d"];
+// Warm palette matching the redesign
+const COLORS = ["#e05c3a", "#c4a882", "#6b8f71", "#8a8680", "#f0ece8", "#2f2d2a"];
 
 export function SpendingChart() {
   const [data, setData] = useState<CategoryData[]>([]);
@@ -32,14 +33,13 @@ export function SpendingChart() {
         const transactions: Transaction[] = await res.json();
 
         const categoryTotals: Record<string, number> = {};
-        
+
         transactions.forEach((t) => {
-          if (t.amount <= 0) return; 
+          if (t.amount <= 0) return;
 
           let categoryName = "Uncategorized";
 
           if (t.personal_finance_category?.primary) {
-            
             categoryName = t.personal_finance_category.primary
               .replace(/_/g, " ")
               .toLowerCase()
@@ -47,7 +47,7 @@ export function SpendingChart() {
           } else if (t.category && t.category.length > 0) {
             categoryName = t.category[0];
           }
-          
+
           categoryTotals[categoryName] = (categoryTotals[categoryName] || 0) + t.amount;
         });
 
@@ -68,18 +68,20 @@ export function SpendingChart() {
   }, []);
 
   return (
-    <Card className="col-span-1">
+    <Card className="col-span-1 bg-surface border-border">
       <CardHeader>
-        <CardTitle>Spending by Category</CardTitle>
+        <CardTitle className="text-xs uppercase tracking-widest text-muted-foreground">
+          Spending by Category
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[200px] w-full">
           {loading ? (
-             <div className="flex h-full items-center justify-center text-sm text-zinc-500">
-               Loading...
-             </div>
+            <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+              Loading...
+            </div>
           ) : data.length === 0 ? (
-            <div className="flex h-full items-center justify-center text-sm text-zinc-500">
+            <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
               No spending data
             </div>
           ) : (
@@ -91,31 +93,38 @@ export function SpendingChart() {
                   cy="50%"
                   innerRadius={60}
                   outerRadius={80}
-                  paddingAngle={5}
+                  paddingAngle={2}
                   dataKey="value"
                 >
                   {data.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip 
+                <Tooltip
                   formatter={(value: number) => `$${value.toFixed(2)}`}
-                  contentStyle={{ backgroundColor: "#000", color: "#fff", borderRadius: "8px", border: "none" }}
-                  itemStyle={{ color: "#fff" }}
+                  contentStyle={{
+                    backgroundColor: "#252320",
+                    color: "#f0ece8",
+                    border: "1px solid #2f2d2a",
+                    borderRadius: 0,
+                    fontFamily: "var(--font-jetbrains), monospace",
+                    fontSize: "12px",
+                  }}
+                  itemStyle={{ color: "#f0ece8" }}
                 />
               </PieChart>
             </ResponsiveContainer>
           )}
         </div>
-        
+
         <div className="mt-4 space-y-2">
           {data.map((item) => (
-            <div key={item.name} className="flex items-center justify-between text-sm">
+            <div key={item.name} className="flex items-center justify-between text-xs">
               <div className="flex items-center gap-2">
-                <div className="h-3 w-3 rounded-full" style={{ backgroundColor: item.color }} />
-                <span className="text-zinc-600">{item.name}</span>
+                <div className="h-2 w-2" style={{ backgroundColor: item.color }} />
+                <span className="text-muted-foreground">{item.name}</span>
               </div>
-              <span className="font-medium">
+              <span className="font-medium tabular-nums text-foreground">
                 {new Intl.NumberFormat("en-US", {
                   style: "currency",
                   currency: "USD",
