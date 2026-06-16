@@ -28,12 +28,34 @@ export async function POST(request: Request) {
     const itemId = exchangeResponse.data.item_id;
 
     
-    await db.insert(plaidItems).values({
-      userId: user.id,
-      accessToken: accessToken,
-      itemId: itemId,
-      institutionName: institution_name || "Unknown Bank",
-    });
+    const [newItem] = await db
+      .insert(plaidItems)
+      .values({
+        userId: user.id,
+        accessToken: accessToken,
+        itemId: itemId,
+        institutionName: institution_name || "Unknown Bank",
+      })
+      .returning({ id: plaidItems.id });
+
+    // Trigger an initial sync for this item in the background.
+    // Not awaited — exchange responds immediately; sync runs async.
+    // Cookie is forwarded so the sync route can authenticate the same session.
+    const host = request.headers.get("host") ?? "localhost:3000";
+    const proto =
+      request.headers.get("x-forwarded-proto") ??
+      (process.env.NODE_ENV === "production" ? "https" : "http");
+
+    fetch(`${proto}://${host}/api/plaid/sync`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: request.headers.get("cookie") ?? "",
+      },
+      body: JSON.stringify({ plaidItemId: newItem.id }),
+    }).catch((err) =>
+      console.error("[exchange] Background sync trigger failed:", err)
+    );
 
     return NextResponse.json({ success: true });
   } catch (error) {
