@@ -27,12 +27,10 @@ export default function StocksPage() {
   );
 
   return (
-    <div className="flex min-h-screen bg-zinc-50 dark:bg-black text-zinc-900 dark:text-zinc-50">
-      <div className="hidden md:block">
-        <Sidebar user={{ user_metadata: { full_name: "User" } } as any} banks={[]} />
-      </div>
-      
-      <div className="flex-1 md:pl-64 transition-all flex flex-col h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-zinc-50 dark:bg-black text-zinc-900 dark:text-zinc-50">
+      <Sidebar user={{ user_metadata: { full_name: "User" } } as any} banks={[]} />
+
+      <div className="flex-1 min-w-0 flex flex-col h-screen overflow-hidden">
         <div className="p-4 border-b border-zinc-200 dark:border-zinc-800">
              <div className="flex items-center gap-4">
                  <div className="relative flex-1 max-w-md">

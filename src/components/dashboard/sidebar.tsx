@@ -1,12 +1,12 @@
 "use client";
 
-import { 
-  LayoutDashboard, 
-  CreditCard, 
+import {
+  LayoutDashboard,
+  CreditCard,
   Wallet,
   TrendingUp,
-  Banknote, 
-  LogOut
+  Banknote,
+  LogOut,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,13 @@ interface SidebarProps {
   banks: any[];
 }
 
+const NAV_ITEMS = [
+  { href: "/", icon: LayoutDashboard, label: "Dashboard" },
+  { href: "/transactions", icon: CreditCard, label: "Transactions" },
+  { href: "/income", icon: Banknote, label: "Income" },
+  { href: "/stocks", icon: TrendingUp, label: "Stocks" },
+];
+
 export function Sidebar({ user, banks }: SidebarProps) {
   const router = useRouter();
   const supabase = createClient();
@@ -28,81 +35,69 @@ export function Sidebar({ user, banks }: SidebarProps) {
   };
 
   return (
-    
-    <div className="fixed left-0 top-0 h-full z-50 w-4 hover:w-64 transition-all duration-300 group overflow-hidden">
-      
-      
-      <div className="absolute left-0 top-0 h-full w-1 bg-zinc-300 dark:bg-zinc-700 group-hover:opacity-0 transition-opacity" />
+    <div className="sticky top-0 self-start h-screen w-14 hover:w-64 transition-all duration-300 group shrink-0 flex flex-col bg-zinc-950 text-zinc-400 border-r border-zinc-800 overflow-hidden z-30">
 
-      
-      <div className="h-full w-64 bg-zinc-950 text-zinc-400 border-r border-zinc-800 -translate-x-[calc(100%-1rem)] group-hover:translate-x-0 transition-transform duration-300 flex flex-col shadow-2xl">
-        
-        {/* Header */}
-        <div className="p-6 min-w-[256px]"> {/* min-w ensure text doesn't wrap */}
-          <div className="flex items-center gap-2 font-bold text-white text-xl">
-            <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center text-white shrink-0">I</div>
-            <span>Invariant</span>
-          </div>
+      {/* Header */}
+      <div className="flex items-center gap-3 px-3 h-16 border-b border-zinc-800/60 shrink-0">
+        <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-sm font-bold shrink-0">
+          I
         </div>
+        <span className="font-bold text-white text-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-100">
+          Invariant
+        </span>
+      </div>
 
-{/* Navigation */}
-        <div className="flex-1 px-4 space-y-2 overflow-y-auto min-w-[256px]">
-          <Link href="/">
-            <div className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:bg-zinc-900 hover:text-white transition-colors">
-              <LayoutDashboard className="h-4 w-4 shrink-0" />
-              <span>Dashboard</span>
+      {/* Navigation */}
+      <nav className="flex-1 py-3 px-2 space-y-1 overflow-y-auto overflow-x-hidden">
+        {NAV_ITEMS.map(({ href, icon: Icon, label }) => (
+          <Link key={href} href={href}>
+            <div className="flex items-center gap-3 px-2 py-2.5 rounded-md text-sm font-medium hover:bg-zinc-800 hover:text-white transition-colors">
+              <Icon className="h-5 w-5 shrink-0" />
+              <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-100">
+                {label}
+              </span>
             </div>
           </Link>
-          
-          { }
-          <Link href="/transactions">
-            <div className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:bg-zinc-900 hover:text-white transition-colors cursor-pointer">
-              <CreditCard className="h-4 w-4 shrink-0" />
-              <span>Transactions</span>
-            </div>
-          </Link>
+        ))}
 
-        
-          <Link href="/income">
-            <div className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:bg-zinc-900 hover:text-white transition-colors cursor-pointer">
-              <Banknote className="h-4 w-4 shrink-0" />
-              <span>Income</span>
-            </div>
-          </Link>
-
-          <Link href="/stocks">
-            <div className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:bg-zinc-900 hover:text-white transition-colors cursor-pointer">
-              <TrendingUp className="h-4 w-4 shrink-0" />
-              <span>Stocks</span>
-            </div>
-          </Link>
-          <div className="pt-8 pb-2 px-3 text-xs font-semibold uppercase tracking-wider text-zinc-600">
+        {/* Connected accounts — only legible when expanded */}
+        <div className="pt-6">
+          <p className="px-2 pb-2 text-xs font-semibold uppercase tracking-wider text-zinc-600 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-100">
             Connected Accounts
-          </div>
-          
+          </p>
+
           {banks.length === 0 ? (
-            <div className="px-3 text-xs text-zinc-600 italic">No accounts yet</div>
+            <p className="px-2 text-xs text-zinc-600 italic whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-100">
+              No accounts yet
+            </p>
           ) : (
             banks.map((bank) => (
-              <div key={bank.id} className="px-3 py-2 text-sm flex items-center gap-2 hover:text-white cursor-pointer truncate">
-                <Wallet className="h-3 w-3 shrink-0" />
-                <span className="truncate">{bank.institutionName}</span>
+              <div
+                key={bank.id}
+                className="flex items-center gap-2 px-2 py-2 text-sm hover:text-white cursor-pointer"
+              >
+                <Wallet className="h-4 w-4 shrink-0" />
+                <span className="truncate whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-100">
+                  {bank.institutionName}
+                </span>
               </div>
             ))
           )}
         </div>
+      </nav>
 
-        {/* Footer */}
-        <div className="p-4 border-t border-zinc-900 min-w-[256px]">
-          <Button 
-            variant="ghost" 
-            className="w-full justify-start gap-3 text-zinc-400 hover:text-red-400 hover:bg-red-900/10"
-            onClick={handleSignOut}
-          >
-            <LogOut className="h-4 w-4 shrink-0" />
-            <span>Log out</span>
-          </Button>
-        </div>
+      {/* Footer */}
+      <div className="p-2 border-t border-zinc-800/60 shrink-0">
+        <Button
+          variant="ghost"
+          className="w-full justify-start gap-3 px-2 text-zinc-400 hover:text-red-400 hover:bg-red-900/10"
+          onClick={handleSignOut}
+        >
+          <LogOut className="h-5 w-5 shrink-0" />
+          <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-100">
+            Log out
+          </span>
+        </Button>
       </div>
     </div>
   );

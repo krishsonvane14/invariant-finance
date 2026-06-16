@@ -1,5 +1,5 @@
-import { Navbar } from "@/components/dashboard/navbar"; 
-import { Sidebar } from "@/components/dashboard/sidebar";
+import { Navbar } from "@/components/dashboard/navbar";
+import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlaidLink } from "@/components/dashboard/plaid-link";
 import { TransactionList } from "@/components/dashboard/transaction-list";
@@ -56,13 +56,9 @@ export default async function Home() {
   const formattedNetWorth = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(totalNetWorth);
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 transition-colors duration-300">
-      <Sidebar user={user} banks={banks} />
-
-      <div className="pl-4 transition-all">
-        <Navbar user={user} />
-
-        <div className="p-8 space-y-8 max-w-7xl mx-auto">
+    <DashboardLayout user={user} banks={banks}>
+      <Navbar user={user} />
+      <div className="p-8 space-y-8 max-w-7xl mx-auto">
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">Dashboard</h1>
@@ -166,7 +162,6 @@ export default async function Home() {
 
           </div>
         </div>
-      </div>
-    </div>
+    </DashboardLayout>
   );
 }

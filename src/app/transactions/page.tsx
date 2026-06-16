@@ -1,5 +1,5 @@
-import { Sidebar } from "@/components/dashboard/sidebar";
 import { Navbar } from "@/components/dashboard/navbar";
+import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import { DataTable } from "@/components/transactions/data-table";
 import { columns } from "@/components/transactions/columns";
 import { createClient } from "@/lib/supabase/server";
@@ -34,23 +34,17 @@ export default async function TransactionsPage() {
   allTransactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
-    <div className="flex min-h-screen bg-zinc-50 dark:bg-black">
-      <Sidebar user={user} banks={banks} />
-      
-      <div className="flex-1 pl-4 transition-all">
-        <Navbar user={user} />
-        
-        <div className="p-8 max-w-7xl mx-auto space-y-8">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">Transactions</h1>
-                <p className="text-zinc-500 dark:text-zinc-400">
-                    View and filter your entire spending history.
-                </p>
-            </div>
-
-            <DataTable columns={columns} data={allTransactions} />
+    <DashboardLayout user={user} banks={banks}>
+      <Navbar user={user} />
+      <div className="p-8 max-w-7xl mx-auto space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">Transactions</h1>
+          <p className="text-zinc-500 dark:text-zinc-400">
+            View and filter your entire spending history.
+          </p>
         </div>
+        <DataTable columns={columns} data={allTransactions} />
       </div>
-    </div>
+    </DashboardLayout>
   );
 }
