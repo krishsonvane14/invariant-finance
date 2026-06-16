@@ -3,21 +3,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function DashboardLoading() {
   return (
     <div className="flex min-h-screen bg-zinc-50 dark:bg-black">
-      {/* Fake Sidebar Skeleton */}
-      <div className="hidden md:flex h-screen w-64 flex-col border-r border-zinc-800 bg-zinc-950 p-6 space-y-8 fixed left-0 top-0">
-        <div className="flex items-center gap-2">
-           <div className="h-8 w-8 bg-zinc-800 rounded-lg animate-pulse" />
-           <Skeleton className="h-6 w-24 bg-zinc-800" />
-        </div>
-        <div className="space-y-4">
-           <Skeleton className="h-8 w-full bg-zinc-900" />
-           <Skeleton className="h-8 w-full bg-zinc-900" />
-           <Skeleton className="h-8 w-full bg-zinc-900" />
-        </div>
+      {/* Sidebar skeleton — matches collapsed w-14 state */}
+      <div className="w-14 shrink-0 sticky top-0 h-screen flex flex-col items-center border-r border-zinc-800 bg-zinc-950 py-4 px-3 gap-5">
+        <div className="h-8 w-8 bg-zinc-800 rounded-lg animate-pulse" />
+        <div className="h-5 w-5 bg-zinc-900 rounded animate-pulse" />
+        <div className="h-5 w-5 bg-zinc-900 rounded animate-pulse" />
+        <div className="h-5 w-5 bg-zinc-900 rounded animate-pulse" />
+        <div className="h-5 w-5 bg-zinc-900 rounded animate-pulse" />
       </div>
 
       {/* Main Content Skeleton */}
-      <div className="flex-1 md:pl-64 transition-all">
+      <div className="flex-1 min-w-0">
         <div className="p-8 space-y-8 max-w-7xl mx-auto">
           
           {/* Header */}
